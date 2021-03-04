@@ -21,5 +21,18 @@ public class MainWindow extends JFrame {
         this.setSize(1000, 1000);
         this.setVisible(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        Thread thread = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    System.out.println(e.toString());
+                }
+                gljpanel.display();
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 }

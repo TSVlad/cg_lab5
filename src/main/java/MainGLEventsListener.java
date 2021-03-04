@@ -7,6 +7,7 @@ import java.util.Date;
 public class MainGLEventsListener implements GLEventListener {
     private double timeStart;
     private double time;
+    private int shaderProgram;
 
     public void init(GLAutoDrawable glAutoDrawable) {
         GL2 gl = glAutoDrawable.getGL().getGL2();
@@ -26,30 +27,12 @@ public class MainGLEventsListener implements GLEventListener {
 
         gl.glShaderSource(v, 1, new String[]{code}, null);
         gl.glCompileShader(v);
-        int shaderProgram = gl.glCreateProgram();
+        shaderProgram = gl.glCreateProgram();
         gl.glAttachShader(shaderProgram, v);
         gl.glLinkProgram(shaderProgram);
         gl.glValidateProgram(shaderProgram);
         gl.glUseProgram(shaderProgram);
         timeStart = new Date().getTime();
-
-
-        Thread thread = new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    System.out.println(e.toString());
-                }
-                System.out.println(time);
-                time = (new Date().getTime() - timeStart) / 1000;
-                int t = gl.glGetUniformLocation(shaderProgram, "t");
-                gl.glUniform4f(t, 0.0f, (float) time, 0.0f, 1.0f);
-            }
-        });
-        thread.setDaemon(true);
-        thread.start();
-
     }
 
     public void dispose(GLAutoDrawable glAutoDrawable) {
@@ -58,6 +41,8 @@ public class MainGLEventsListener implements GLEventListener {
 
     public void display(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+
         gl.glColor3d(1, 0, 0);
         gl.glBegin(GL2.GL_POLYGON);
         gl.glVertex3d(0.8, 0.5, 0.5);
@@ -65,7 +50,12 @@ public class MainGLEventsListener implements GLEventListener {
         gl.glVertex3d(-0.3, -0.5, 0);
         gl.glVertex3d(-0.3, 0, 0.5);
         gl.glEnd();
+
         System.out.println(time);
+        time = (new Date().getTime() - timeStart) / 1000;
+        gl.glUseProgram(shaderProgram);
+        int t = gl.glGetUniformLocation(shaderProgram, "t");
+        gl.glUniform4f(t, 0.0f, (float) time, 0.0f, 1.0f);
     }
 
     public void reshape(GLAutoDrawable glAutoDrawable, int i, int i1, int i2, int i3) {
