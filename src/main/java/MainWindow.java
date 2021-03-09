@@ -1,6 +1,8 @@
+import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.util.Animator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,17 +24,20 @@ public class MainWindow extends JFrame {
         this.setVisible(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        Thread thread = new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    System.out.println(e.toString());
-                }
-                gljpanel.display();
-            }
-        });
-        thread.setDaemon(true);
-        thread.start();
+        Animator anim = new Animator(gljpanel);
+        anim.start();
+
+//        Thread thread = new Thread(() -> {
+//            while (true) {
+//                try {
+//                    Thread.sleep(10);
+//                } catch (InterruptedException e) {
+//                    System.out.println(e.toString());
+//                }
+//                gljpanel.display();
+//            }
+//        });
+//        thread.setDaemon(true);
+//        thread.start();
     }
 }
